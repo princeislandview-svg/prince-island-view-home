@@ -239,7 +239,7 @@ function overlapsPeak(arr, dep) {
 }
 function adultMultiplier(adults) {
   if (adults >= 4) return 1.40;
-  if (adults === 3) return 1.15;
+  if (adults === 3) return 1.20;
   return 1;
 }
 function euro(n) { return new Intl.NumberFormat(lang === "el" ? "el-GR" : "en-US", {style:"currency", currency:"EUR", maximumFractionDigits:0}).format(n); }
@@ -301,12 +301,37 @@ function getFormValues() {
   };
 }
 
+function estimateFromValues(arrival, departure, adultsValue, childrenValue) {
+  const arr = parseDate(arrival);
+  const dep = parseDate(departure);
+  const adults = Number(adultsValue || 2);
+  const children = Number(childrenValue || 0);
+  if (!arr || !dep || dep <= arr || adults + children > 4) return null;
+  const nights = nightsBetween(arr, dep);
+  const min = overlapsPeak(arr, dep) ? 7 : 5;
+  let total = 0;
+  for (let d = new Date(arr); d < dep; d = addDays(d, 1)) {
+    const base = PRICES[iso(d)];
+    if (base == null) return null;
+    total += base * adultMultiplier(adults) + children * 20;
+  }
+  const originalTotal = total;
+  const directTotal = Math.round(originalTotal * 0.90);
+  return { originalTotal, directTotal, total: directTotal, avg: directTotal / nights, nights, arrival, departure, adults, children, isShortStay: nights < min };
+}
+
+function currentRequestEstimate() {
+  const f = getFormValues();
+  return estimateFromValues(f.arrival, f.departure, f.adults, f.children) || lastEstimate;
+}
+
 function buildRequestMessage() {
   const f = getFormValues();
-  const priceLine = lastEstimate
+  const estimate = currentRequestEstimate();
+  const priceLine = estimate
     ? (lang === "el"
-      ? `Τιμή απευθείας κράτησης: ${euro(lastEstimate.directTotal)} (αρχική εκτίμηση: ${euro(lastEstimate.originalTotal)}).`
-      : `Direct booking price: ${euro(lastEstimate.directTotal)} (original estimate: ${euro(lastEstimate.originalTotal)}).`)
+      ? `Τιμή απευθείας κράτησης: ${euro(estimate.directTotal)} (αρχική εκτίμηση: ${euro(estimate.originalTotal)}).`
+      : `Direct booking price: ${euro(estimate.directTotal)} (original estimate: ${euro(estimate.originalTotal)}).`)
     : (lang === "el" ? "Δεν έχει γίνει υπολογισμός τιμής." : "No price estimate has been calculated.");
 
   if (lang === "el") {
@@ -314,7 +339,6 @@ function buildRequestMessage() {
   }
   return `Hello, I am interested in booking Prince Island View Home.\n\nDates: ${f.arrival || "-"} to ${f.departure || "-"}\nGuests: ${f.adults} adults, ${f.children} children\n${priceLine}\n\nName: ${f.name || "-"}\nEmail: ${f.email || "-"}\nPhone: ${f.phone || "-"}\nMessage: ${f.message || "-"}`;
 }
-
 function updateHiddenFields() {
   const est = document.getElementById("estimatedPriceField");
   const dates = document.getElementById("calculatedDatesField");
@@ -339,7 +363,7 @@ function updateHiddenFields() {
 
   const msg = buildRequestMessage();
   if (wa) wa.href = `https://wa.me/306956645537?text=${encodeURIComponent(msg)}`;
-  if (vi) vi.href = `viber://chat?number=%2B306956645537`;
+  if (vi) vi.href = `viber://forward?text=${encodeURIComponent(msg)}`;
 }
 
 function syncGuestSelects(adultsId, childrenId) {
@@ -394,31 +418,38 @@ document.querySelectorAll('#bookingRequestForm input, #bookingRequestForm textar
   el.addEventListener('change', updateHiddenFields);
 });
 
-document.getElementById("bookingRequestForm").addEventListener("submit", async (event) => {
+document.getElementById("bookingRequestForm").addEventListener("submit", (event) => {
   event.preventDefault();
-  updateHiddenFields();
   const form = event.currentTarget;
   const status = document.getElementById("requestStatus");
-  const data = new FormData(form);
-  data.set("form-name", "booking-request");
-  data.set("full_message", buildRequestMessage());
-  try {
-    await fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: new URLSearchParams(data).toString() });
-    status.className = "request-status success";
-    status.textContent = t("formSuccess");
-  } catch (error) {
-    status.className = "request-status error";
-    status.textContent = t("formError");
-    const subject = encodeURIComponent("Prince Island View Home booking request");
-    const body = encodeURIComponent(buildRequestMessage());
-    window.location.href = `mailto:princeislandview@gmail.com?subject=${subject}&body=${body}`;
-  }
+  if (!form.reportValidity()) return;
+  updateHiddenFields();
+  const subject = encodeURIComponent("Prince Island View Home booking request");
+  const body = encodeURIComponent(buildRequestMessage());
+  window.location.href = `mailto:princeislandview@gmail.com?subject=${subject}&body=${body}`;
+  status.className = "request-status success";
+  status.textContent = lang === "el"
+    ? "Άνοιξε το email app με έτοιμο μήνυμα. Πατήστε αποστολή για να ολοκληρωθεί το αίτημα."
+    : "Your email app opened with a prepared request. Press send to complete it.";
 });
 
 document.getElementById("viberLink").addEventListener("click", async () => {
+  updateHiddenFields();
   const msg = buildRequestMessage();
   try { await navigator.clipboard.writeText(msg); } catch(e) {}
+  const status = document.getElementById("requestStatus");
+  if (status) {
+    status.className = "request-status success";
+    status.textContent = lang === "el"
+      ? "Το μήνυμα είναι έτοιμο για Viber. Αν δεν εμφανιστεί αυτόματα, έχει αντιγραφεί για επικόλληση."
+      : "The Viber message is ready. If it does not appear automatically, it has been copied for paste.";
+  }
 });
+
+document.getElementById("whatsappLink").addEventListener("click", () => {
+  updateHiddenFields();
+});
+
 
 
 const dialog = document.getElementById("lightbox");
