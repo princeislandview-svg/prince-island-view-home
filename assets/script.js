@@ -173,7 +173,7 @@ const TEXT = {
     messagePlaceholder:"Tell us anything we should know about your stay.", sendRequest:"Send request by email", whatsapp:"Send on WhatsApp", viber:"Send on Viber", reqAdults:"Adults 17+", reqChildren:"Children ≤16", formSuccess:"Your request has been sent. We will reply shortly.", formError:"If the request is not sent automatically, please use WhatsApp or Viber below.",
     finalEyebrow:"Prince Island View Home", finalTitle:"A slower way to experience Lefkada.",
     estimateLabel:"Estimated price", nights:"nights", avgNight:"avg. / night", finalNote:"Final confirmation depends on availability.",
-    totalGuestsError:"Maximum capacity is 4 guests.", minError:"Minimum stay for these dates is", dateError:"Please select valid arrival and departure dates.", priceError:"Prices are available for stays between 21 May and 12 October 2026."
+    totalGuestsError:"Maximum capacity is 4 guests.", minError:"Minimum stay for these dates is", dateError:"Please select valid arrival and departure dates.", priceError:"We currently accept bookings for the 2026 season from 21 May to 12 October. Prices for 2027 will be published soon, but you can contact us directly for early reservations."
   },
   el: {
     navExperience:"Εμπειρία", navGallery:"Gallery", navRates:"Εκτίμηση", navRequest:"Αίτημα κράτησης",
@@ -201,7 +201,7 @@ const TEXT = {
     messagePlaceholder:"Γράψτε μας οτιδήποτε χρειάζεται να γνωρίζουμε για τη διαμονή σας.", sendRequest:"Αποστολή αιτήματος με email", whatsapp:"Αποστολή στο WhatsApp", viber:"Αποστολή στο Viber", reqAdults:"Ενήλικες 17+", reqChildren:"Παιδιά ≤16", formSuccess:"Το αίτημά σας στάλθηκε. Θα απαντήσουμε σύντομα.", formError:"Αν δεν σταλεί αυτόματα, χρησιμοποιήστε WhatsApp ή Viber από κάτω.",
     finalEyebrow:"Prince Island View Home", finalTitle:"Ένας πιο αργός τρόπος να ζήσετε τη Λευκάδα.",
     estimateLabel:"Ενδεικτική τιμή", nights:"βράδια", avgNight:"μ.ό. / βράδυ", finalNote:"Η τελική επιβεβαίωση εξαρτάται από τη διαθεσιμότητα.",
-    totalGuestsError:"Η μέγιστη χωρητικότητα είναι 4 άτομα.", minError:"Η ελάχιστη διαμονή για αυτές τις ημερομηνίες είναι", dateError:"Επιλέξτε σωστές ημερομηνίες άφιξης και αναχώρησης.", priceError:"Οι τιμές είναι διαθέσιμες για διαμονές από 21 Μαΐου έως 12 Οκτωβρίου 2026."
+    totalGuestsError:"Η μέγιστη χωρητικότητα είναι 4 άτομα.", minError:"Η ελάχιστη διαμονή για αυτές τις ημερομηνίες είναι", dateError:"Επιλέξτε σωστές ημερομηνίες άφιξης και αναχώρησης.", priceError:"Προς το παρόν δεχόμαστε κρατήσεις για τη σεζόν 2026 από 21 Μαΐου έως 12 Οκτωβρίου. Οι τιμές για το 2027 θα ανακοινωθούν σύντομα, αλλά μπορείτε να επικοινωνήσετε μαζί μας για πρόωρη κράτηση."
   }
 };
 
